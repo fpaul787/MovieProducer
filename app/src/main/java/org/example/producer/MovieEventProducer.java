@@ -11,29 +11,32 @@ import org.slf4j.LoggerFactory;
 public class MovieEventProducer implements EventProducer {
 
     private static final Logger logger = LoggerFactory.getLogger(MovieEventProducer.class);
-    private static final String TOPIC_NAME = "movie_events_test";
-    
+    private final String topicName;
     private final KafkaProducer<String, MovieEvent> kafkaProducer;
 
-    public MovieEventProducer(KafkaProducer<String, MovieEvent> kafkaProducer) {
+    public MovieEventProducer(KafkaProducer<String, MovieEvent> kafkaProducer, String topicName) {
         this.kafkaProducer = kafkaProducer;
+        this.topicName = topicName;
     }
 
     public MovieEventProducer(Properties config) {
-        // Initialize producer with config
         this.kafkaProducer = new KafkaProducer<>(config);
+        this.topicName = config.getProperty("topic.movies");
+        if (this.topicName == null || this.topicName.isBlank()) {
+            throw new IllegalArgumentException("Required config 'topic.movies' is not set");
+        }
     }
 
     @Override
     public void sendEvent(MovieEvent event) throws Exception {
-        ProducerRecord<String, MovieEvent> record = new ProducerRecord<>(TOPIC_NAME, event.getMovieId(), event);
+        ProducerRecord<String, MovieEvent> record = new ProducerRecord<>(topicName, event.getKey(), event);
         
         kafkaProducer.send(record, (metadata, exception) -> {
             if (exception != null) {
-                logger.error("Failed to send event: {}", event.getMovieId(), exception);
+                logger.error("Failed to send event: {}", event.getKey(), exception);
             } else {
                 logger.info("Sent event {} to partition {} with offset {}", 
-                    event.getMovieId(), metadata.partition(), metadata.offset());
+                    event.getKey(), metadata.partition(), metadata.offset());
             }
         });
     }
