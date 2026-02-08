@@ -11,20 +11,24 @@ import org.slf4j.LoggerFactory;
 public class RatingEventProducer {
 
     private static final Logger logger = LoggerFactory.getLogger(RatingEventProducer.class);
-    private static final String TOPIC_NAME = "rating_events_test";
-    
+    private final String topicName;
     private final KafkaProducer<String, RatingEvent> kafkaProducer;
 
-    public RatingEventProducer(KafkaProducer<String, RatingEvent> kafkaProducer) {
+    public RatingEventProducer(KafkaProducer<String, RatingEvent> kafkaProducer, String topicName) {
         this.kafkaProducer = kafkaProducer;
+        this.topicName = topicName;
     }
 
     public RatingEventProducer(Properties config) {
+        this.topicName = config.getProperty("topic.ratings");
+        if (this.topicName == null || this.topicName.isBlank()) {
+            throw new IllegalArgumentException("Required config 'topic.ratings' is not set");
+        }
         this.kafkaProducer = new KafkaProducer<>(config);
     }
 
     public void sendEvent(RatingEvent event) throws Exception {
-        ProducerRecord<String, RatingEvent> record = new ProducerRecord<>(TOPIC_NAME, event.getKey(), event);
+        ProducerRecord<String, RatingEvent> record = new ProducerRecord<>(topicName, event.getKey(), event);
         
         kafkaProducer.send(record, (metadata, exception) -> {
             if (exception != null) {
