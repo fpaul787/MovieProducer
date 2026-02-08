@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class RatingEventProducer {
 
     private static final Logger logger = LoggerFactory.getLogger(RatingEventProducer.class);
-    private static final String TOPIC_NAME = "rating_events";
+    private static final String TOPIC_NAME = "rating_events_test";
     
     private final KafkaProducer<String, RatingEvent> kafkaProducer;
 

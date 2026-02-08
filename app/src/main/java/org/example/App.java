@@ -13,10 +13,14 @@ import java.util.List;
 import java.util.Properties;
 
 import org.example.csv.MovieEventCSVReader;
+import org.example.csv.RatingEventCSVReader;
 import org.example.model.MovieEvent;
+import org.example.model.RatingEvent;
 import org.example.producer.MovieEventProducer;
+import org.example.producer.RatingEventProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class App {
     
@@ -44,7 +48,8 @@ public class App {
      * Main application logic for reading CSV and initializing Kafka producer
      */
     private static void run(Properties config) throws Exception {
-        MovieEventProducer producer = null;
+        MovieEventProducer movieProducer = null;
+        RatingEventProducer ratingProducer = null;
 
         try {
             // Read CSV and create MovieEvent objects
@@ -61,15 +66,31 @@ public class App {
 
             logger.info("Successfully read {} movie events from CSV", movieEvents.size());
 
-            // Initialize Kafka producer and send events
-            // producer = new MovieEventProducer(config);
+            // movieProducer = new MovieEventProducer(config);
             // for (MovieEvent event : movieEvents) {
-            //     producer.sendEvent(event);
+            //     movieProducer.sendEvent(event);
+            // }
+
+
+            // Read ratings CSV
+            RatingEventCSVReader ratingReader = new RatingEventCSVReader();
+            String ratingsFilePath = "./ml_20m/ratings.csv";
+            List<RatingEvent> ratingEvents = ratingReader.readRatingEvents(ratingsFilePath);
+
+            logger.info("Successfully read {} rating events from CSV", ratingEvents.size());
+
+
+            // ratingProducer = new RatingEventProducer(config);
+            // for (RatingEvent event : ratingEvents) {
+            //     ratingProducer.sendEvent(event);
             // }
         } finally {
             // Ensure producer is properly closed
-            if (producer != null) {
-                producer.close();
+            if (movieProducer != null) {
+                movieProducer.close();
+            }
+            if (ratingProducer != null) {
+                ratingProducer.close();
             }
         }
     }
