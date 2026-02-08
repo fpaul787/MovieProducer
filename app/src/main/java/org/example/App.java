@@ -49,7 +49,7 @@ public class App {
         try {
             // Read CSV and create MovieEvent objects
             MovieEventCSVReader csvReader = new MovieEventCSVReader();
-            String csvFilePath = "./ml_20m/movie_events.csv";
+            String csvFilePath = "./ml_20m/movies.csv";
 
             logger.info("Reading movie events from CSV file: {}", csvFilePath);
             List<MovieEvent> movieEvents = csvReader.readMovieEvents(csvFilePath);
@@ -62,10 +62,10 @@ public class App {
             logger.info("Successfully read {} movie events from CSV", movieEvents.size());
 
             // Initialize Kafka producer and send events
-            producer = new MovieEventProducer(config);
-            for (MovieEvent event : movieEvents) {
-                producer.sendEvent(event);
-            }
+            // producer = new MovieEventProducer(config);
+            // for (MovieEvent event : movieEvents) {
+            //     producer.sendEvent(event);
+            // }
         } finally {
             // Ensure producer is properly closed
             if (producer != null) {

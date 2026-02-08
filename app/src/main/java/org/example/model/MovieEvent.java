@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Represents a movie event that will be sent to Kafka
  */
-public class MovieEvent {
+public class MovieEvent implements Event {
     
     @JsonProperty("movieId")
     private String movieId;
@@ -49,6 +49,9 @@ public class MovieEvent {
     
     public LocalDateTime getTimestamp() { return timestamp; }
     public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+    
+    @Override
+    public String getKey() { return movieId; }
     
     @Override
     public boolean equals(Object o) {
