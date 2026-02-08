@@ -11,32 +11,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MovieEvent {
     
-    @JsonProperty("movie_id")
+    @JsonProperty("movieId")
     private String movieId;
     
-    @JsonProperty("movie_title")
-    private String movieTitle;
+    @JsonProperty("title")
+    private String title;
     
-    @JsonProperty("genre")
-    private String genre;
-    
-    @JsonProperty("director")
-    private String director;
-    
-    @JsonProperty("release_year")
-    private Integer releaseYear;
-    
-    @JsonProperty("rating")
-    private Double rating;
-    
-    @JsonProperty("duration_minutes")
-    private Integer durationMinutes;
-    
-    @JsonProperty("event_type")
-    private String eventType; // e.g., "view", "purchase", "rate", "favorite"
-    
-    @JsonProperty("user_id")
-    private String userId;
+    @JsonProperty("genres")
+    private String genres;
     
     @JsonProperty("timestamp")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -48,18 +30,10 @@ public class MovieEvent {
     }
     
     // Constructor for CSV parsing
-    public MovieEvent(String movieId, String movieTitle, String genre, String director, 
-                     Integer releaseYear, Double rating, Integer durationMinutes, 
-                     String eventType, String userId) {
+    public MovieEvent(String movieId, String title, String genres) {
         this.movieId = movieId;
-        this.movieTitle = movieTitle;
-        this.genre = genre;
-        this.director = director;
-        this.releaseYear = releaseYear;
-        this.rating = rating;
-        this.durationMinutes = durationMinutes;
-        this.eventType = eventType;
-        this.userId = userId;
+        this.title = title;
+        this.genres = genres;
         this.timestamp = LocalDateTime.now();
     }
     
@@ -67,29 +41,11 @@ public class MovieEvent {
     public String getMovieId() { return movieId; }
     public void setMovieId(String movieId) { this.movieId = movieId; }
     
-    public String getMovieTitle() { return movieTitle; }
-    public void setMovieTitle(String movieTitle) { this.movieTitle = movieTitle; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
     
-    public String getGenre() { return genre; }
-    public void setGenre(String genre) { this.genre = genre; }
-    
-    public String getDirector() { return director; }
-    public void setDirector(String director) { this.director = director; }
-    
-    public Integer getReleaseYear() { return releaseYear; }
-    public void setReleaseYear(Integer releaseYear) { this.releaseYear = releaseYear; }
-    
-    public Double getRating() { return rating; }
-    public void setRating(Double rating) { this.rating = rating; }
-    
-    public Integer getDurationMinutes() { return durationMinutes; }
-    public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
-    
-    public String getEventType() { return eventType; }
-    public void setEventType(String eventType) { this.eventType = eventType; }
-    
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public String getGenres() { return genres; }
+    public void setGenres(String genres) { this.genres = genres; }
     
     public LocalDateTime getTimestamp() { return timestamp; }
     public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
@@ -111,14 +67,8 @@ public class MovieEvent {
     public String toString() {
         return "MovieEvent{" +
                 "movieId='" + movieId + '\'' +
-                ", movieTitle='" + movieTitle + '\'' +
-                ", genre='" + genre + '\'' +
-                ", director='" + director + '\'' +
-                ", releaseYear=" + releaseYear +
-                ", rating=" + rating +
-                ", durationMinutes=" + durationMinutes +
-                ", eventType='" + eventType + '\'' +
-                ", userId='" + userId + '\'' +
+                ", title='" + title + '\'' +
+                ", genres='" + genres + '\'' +
                 ", timestamp=" + timestamp +
                 '}';
     }

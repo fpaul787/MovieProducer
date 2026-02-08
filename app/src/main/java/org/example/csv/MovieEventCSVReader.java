@@ -4,7 +4,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -19,12 +18,6 @@ import org.slf4j.LoggerFactory;
 public class MovieEventCSVReader {
     
     private static final Logger logger = LoggerFactory.getLogger(MovieEventCSVReader.class);
-    
-    // Expected CSV headers
-    private static final String[] HEADERS = {
-        "movie_title", "genre", "director", "release_year", 
-        "rating", "duration_minutes", "event_type", "user_id"
-    };
     
     /**
      * Reads movie events from a CSV file
@@ -82,18 +75,11 @@ public class MovieEventCSVReader {
      */
     private MovieEvent parseCSVRecord(CSVRecord record) {
         try {
-            String movieId = UUID.randomUUID().toString(); // Generate unique event ID
-            String movieTitle = getStringValue(record, "movie_title", true);
-            String genre = getStringValue(record, "genre", false);
-            String director = getStringValue(record, "director", false);
-            Integer releaseYear = getIntegerValue(record, "release_year", false);
-            Double rating = getDoubleValue(record, "rating", false);
-            Integer durationMinutes = getIntegerValue(record, "duration_minutes", false);
-            String eventType = getStringValue(record, "event_type", true);
-            String userId = getStringValue(record, "user_id", true);
+            String movieId = getStringValue(record, "movieId", true);
+            String title = getStringValue(record, "title", true);
+            String genres = getStringValue(record, "genres", false);
             
-            return new MovieEvent(movieId, movieTitle, genre, director, 
-                                releaseYear, rating, durationMinutes, eventType, userId);
+            return new MovieEvent(movieId, title, genres);
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to parse CSV record: " + e.getMessage(), e);
         }
@@ -114,39 +100,5 @@ public class MovieEventCSVReader {
             throw new IllegalArgumentException("Required column '" + columnName + "' is empty");
         }
         return null;
-    }
-    
-    private Integer getIntegerValue(CSVRecord record, String columnName, boolean required) {
-        String value = getStringValue(record, columnName, required);
-        if (value == null) {
-            return null;
-        }
-        
-        try {
-            return Integer.valueOf(value);
-        } catch (NumberFormatException e) {
-            if (required) {
-                throw new IllegalArgumentException("Invalid integer value for '" + columnName + "': " + value);
-            }
-            logger.warn("Invalid integer value for column '{}': {}. Using null.", columnName, value);
-            return null;
-        }
-    }
-    
-    private Double getDoubleValue(CSVRecord record, String columnName, boolean required) {
-        String value = getStringValue(record, columnName, required);
-        if (value == null) {
-            return null;
-        }
-        
-        try {
-            return Double.valueOf(value);
-        } catch (NumberFormatException e) {
-            if (required) {
-                throw new IllegalArgumentException("Invalid double value for '" + columnName + "': " + value);
-            }
-            logger.warn("Invalid double value for column '{}': {}. Using null.", columnName, value);
-            return null;
-        }
     }
 }
