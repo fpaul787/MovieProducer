@@ -1,9 +1,7 @@
 package org.example.model;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -20,13 +18,8 @@ public class MovieEvent implements Event {
     @JsonProperty("genres")
     private String genres;
     
-    @JsonProperty("timestamp")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp;
-    
     // Default constructor
     public MovieEvent() {
-        this.timestamp = LocalDateTime.now();
     }
     
     // Constructor for CSV parsing
@@ -34,7 +27,6 @@ public class MovieEvent implements Event {
         this.movieId = movieId;
         this.title = title;
         this.genres = genres;
-        this.timestamp = LocalDateTime.now();
     }
     
     // Getters and setters
@@ -46,9 +38,6 @@ public class MovieEvent implements Event {
     
     public String getGenres() { return genres; }
     public void setGenres(String genres) { this.genres = genres; }
-    
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
     
     @Override
     public String getKey() { return movieId; }
@@ -72,7 +61,6 @@ public class MovieEvent implements Event {
                 "movieId='" + movieId + '\'' +
                 ", title='" + title + '\'' +
                 ", genres='" + genres + '\'' +
-                ", timestamp=" + timestamp +
                 '}';
     }
 }
