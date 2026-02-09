@@ -42,9 +42,9 @@ public class LinkEvent implements Event {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LinkEvent that = (LinkEvent) o;
-        return movieId.equals(that.movieId) &&
-               imdbId.equals(that.imdbId) &&
-               tmdbId.equals(that.tmdbId);
+        return Objects.equals(movieId, that.movieId) &&
+               Objects.equals(imdbId, that.imdbId) &&
+               Objects.equals(tmdbId, that.tmdbId);
     }
 
     @Override
