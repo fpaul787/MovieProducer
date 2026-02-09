@@ -15,11 +15,10 @@ public class MovieEventProducer extends AbstractEventProducer<MovieEvent> {
     }
 
     public MovieEventProducer(Properties config) {
-        super(config);
+        super(config, "topic.movies");
     }
 
-    @Override
-    protected String getTopicConfigKey() {
-        return "topic.movies";
+    public MovieEventProducer(Properties config, String topicConfigKey) {
+        super(config, topicConfigKey);
     }
 }

@@ -15,11 +15,10 @@ public class TagEventProducer extends AbstractEventProducer<TagEvent> {
     }
 
     public TagEventProducer(Properties config) {
-        super(config);
+        super(config, "topic.tags");
     }
 
-    @Override
-    protected String getTopicConfigKey() {
-        return "topic.tags";
+    public TagEventProducer(Properties config, String topicConfigKey) {
+        super(config, topicConfigKey);
     }
 }

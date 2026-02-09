@@ -19,7 +19,7 @@ public abstract class AbstractEventProducer<T extends Event> {
     private final KafkaProducer<String, T> kafkaProducer;
 
     /**
-     * Constructor for testing with injected KafkaProducer
+     * Constructor for use with existing KafkaProducer instance
      */
     public AbstractEventProducer(KafkaProducer<String, T> kafkaProducer, String topicName) {
         this.kafkaProducer = kafkaProducer;
@@ -27,21 +27,20 @@ public abstract class AbstractEventProducer<T extends Event> {
     }
 
     /**
-     * Constructor for production use with Properties config
+     * Constructor for use with config properties
+     * @param config Kafka producer configuration
+     * @param topicConfigKey the property key for the topic name
      */
-    public AbstractEventProducer(Properties config) {
-        this.topicName = config.getProperty(getTopicConfigKey());
+    public AbstractEventProducer(Properties config, String topicConfigKey) {
+        if (topicConfigKey == null || topicConfigKey.isBlank()) {
+            throw new IllegalArgumentException("topicConfigKey must not be null or blank");
+        }
+        this.topicName = config.getProperty(topicConfigKey);
         if (this.topicName == null || this.topicName.isBlank()) {
-            throw new IllegalArgumentException("Required config '" + getTopicConfigKey() + "' is not set");
+            throw new IllegalArgumentException("Required config '" + topicConfigKey + "' is not set");
         }
         this.kafkaProducer = new KafkaProducer<>(config);
     }
-
-    /**
-     * Returns the configuration key for the topic name
-     * Implemented by concrete subclasses
-     */
-    protected abstract String getTopicConfigKey();
 
     /**
      * Sends an event to Kafka

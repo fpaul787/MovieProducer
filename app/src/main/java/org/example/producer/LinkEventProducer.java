@@ -12,12 +12,10 @@ public class LinkEventProducer extends AbstractEventProducer<LinkEvent> {
     }
 
     public LinkEventProducer(Properties config) {
-        super(config);
+        super(config, "topic.links");
     }
 
-    @Override
-    protected String getTopicConfigKey() {
-        return "topic.links";
+    public LinkEventProducer(Properties config, String topicConfigKey) {
+        super(config, topicConfigKey);
     }
-
 }

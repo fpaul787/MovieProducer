@@ -15,11 +15,10 @@ public class RatingEventProducer extends AbstractEventProducer<RatingEvent> {
     }
 
     public RatingEventProducer(Properties config) {
-        super(config);
+        super(config, "topic.ratings");
     }
 
-    @Override
-    protected String getTopicConfigKey() {
-        return "topic.ratings";
+    public RatingEventProducer(Properties config, String topicConfigKey) {
+        super(config, topicConfigKey);
     }
 }
