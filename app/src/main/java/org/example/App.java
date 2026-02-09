@@ -12,12 +12,15 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 
+import org.example.csv.LinkReader;
 import org.example.csv.MovieReader;
 import org.example.csv.RatingReader;
 import org.example.csv.TagReader;
+import org.example.model.LinkEvent;
 import org.example.model.MovieEvent;
 import org.example.model.RatingEvent;
 import org.example.model.TagEvent;
+import org.example.producer.LinkEventProducer;
 import org.example.producer.MovieEventProducer;
 import org.example.producer.RatingEventProducer;
 import org.example.producer.TagEventProducer;
@@ -31,6 +34,7 @@ public class App {
     private static MovieEventProducer movieProducer;
     private static RatingEventProducer ratingProducer;
     private static TagEventProducer tagProducer;
+    private static LinkEventProducer linkProducer;
     
     public static void main(String[] args) {
         logger.info("Starting Movie Producer Application...");
@@ -70,7 +74,6 @@ public class App {
 
             // Read ratings CSV
             List<RatingEvent> ratingEvents = readRatingEvents("./ml_20m/ratings_small.csv");
-
             ratingProducer = new RatingEventProducer(config);
             for (RatingEvent event : ratingEvents) {
                 ratingProducer.sendEvent(event);
@@ -81,6 +84,13 @@ public class App {
             tagProducer = new TagEventProducer(config);
             for (TagEvent event : tagEvents) {
                 tagProducer.sendEvent(event);
+            }
+
+            // Read links CSV
+            List<LinkEvent> linkEvents = readLinkEvents("./ml_20m/links_small.csv");
+            linkProducer = new LinkEventProducer(config);
+            for (LinkEvent event : linkEvents) {
+                linkProducer.sendEvent(event);
             }
         } catch (IOException e) {
             logger.error("IO error occurred: {}", e.getMessage(), e);
@@ -97,6 +107,9 @@ public class App {
             }
             if (tagProducer != null) {
                 tagProducer.close();
+            }
+            if (linkProducer != null) {
+                linkProducer.close();
             }
         }
     }
@@ -138,4 +151,9 @@ public class App {
       return csvReader.readEvents(filePath);
   }
 
+    private static List<LinkEvent> readLinkEvents(String filePath) throws IOException {
+        logger.info("Reading link events from CSV file: {}", filePath);
+        LinkReader csvReader = new LinkReader();
+        return csvReader.readEvents(filePath);
+    }
 }
