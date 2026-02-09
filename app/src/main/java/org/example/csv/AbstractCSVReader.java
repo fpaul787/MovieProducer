@@ -97,6 +97,7 @@ public abstract class AbstractCSVReader<T> {
         } else if (required) {
             throw new IllegalArgumentException("Required column '" + columnName + "' is empty");
         }
+        logger.warn("Optional column '{}' has invalid value '{}', treating as null", columnName, value);
         return null;
     }
 
@@ -106,9 +107,13 @@ public abstract class AbstractCSVReader<T> {
             return null;
         }
         try {
-            return Double.parseDouble(stringValue);
+            return Double.valueOf(stringValue);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Column '" + columnName + "' is not a valid number: " + stringValue);
+            if (required) {
+                throw new IllegalArgumentException("Column '" + columnName + "' is not a valid number: " + stringValue);
+            }
+            logger.warn("Optional column '{}' has invalid value '{}', treating as null", columnName, stringValue);
+            return null;
         }
     }
 
@@ -118,9 +123,13 @@ public abstract class AbstractCSVReader<T> {
             return null;
         }
         try {
-            return Long.parseLong(stringValue);
+            return Long.valueOf(stringValue);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Column '" + columnName + "' is not a valid long: " + stringValue);
+            if (required) {
+                throw new IllegalArgumentException("Column '" + columnName + "' is not a valid long: " + stringValue);
+            }
+            logger.warn("Optional column '{}' has invalid value '{}', treating as null", columnName, stringValue);
+            return null;
         }
     }
 }
