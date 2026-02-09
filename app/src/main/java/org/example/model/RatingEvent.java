@@ -56,7 +56,9 @@ public class RatingEvent implements Event {
         RatingEvent that = (RatingEvent) o;
         return Objects.equals(userId, that.userId) && 
                Objects.equals(movieId, that.movieId) &&
-               Objects.equals(timestamp, that.timestamp);
+               Objects.equals(timestamp, that.timestamp) &&
+                Objects.equals(rating, that.rating);
+
     }
     
     @Override
