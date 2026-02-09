@@ -8,7 +8,7 @@ import org.example.model.MovieEvent;
 /**
  * Kafka producer for movie events
  */
-public class MovieEventProducer extends AbstractEventProducer<MovieEvent> implements EventProducer {
+public class MovieEventProducer extends AbstractEventProducer<MovieEvent> {
 
     public MovieEventProducer(KafkaProducer<String, MovieEvent> kafkaProducer, String topicName) {
         super(kafkaProducer, topicName);
