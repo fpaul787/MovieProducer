@@ -31,10 +31,6 @@ import org.slf4j.LoggerFactory;
 public class App {
     
     private static final Logger logger = LoggerFactory.getLogger(App.class);
-    private static MovieEventProducer movieProducer;
-    private static RatingEventProducer ratingProducer;
-    private static TagEventProducer tagProducer;
-    private static LinkEventProducer linkProducer;
     
     public static void main(String[] args) {
         logger.info("Starting Movie Producer Application...");
@@ -58,6 +54,10 @@ public class App {
      * Main application logic for reading CSV and initializing Kafka producer
      */
     private static void run(Properties config) throws Exception {
+        MovieEventProducer movieProducer;
+        RatingEventProducer ratingProducer;
+        TagEventProducer tagProducer;
+        LinkEventProducer linkProducer;
         try {
             // Read CSV and create MovieEvent objects
             List<MovieEvent> movieEvents = readMovieEvents("./ml_20m/movies_small.csv");
