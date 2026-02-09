@@ -12,11 +12,21 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 
-import org.example.csv.MovieEventCSVReader;
+import org.example.csv.LinkReader;
+import org.example.csv.MovieReader;
+import org.example.csv.RatingReader;
+import org.example.csv.TagReader;
+import org.example.model.LinkEvent;
 import org.example.model.MovieEvent;
+import org.example.model.RatingEvent;
+import org.example.model.TagEvent;
+import org.example.producer.LinkEventProducer;
 import org.example.producer.MovieEventProducer;
+import org.example.producer.RatingEventProducer;
+import org.example.producer.TagEventProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class App {
     
@@ -44,39 +54,73 @@ public class App {
      * Main application logic for reading CSV and initializing Kafka producer
      */
     private static void run(Properties config) throws Exception {
-        MovieEventProducer producer = null;
-
+        MovieEventProducer movieProducer = null;
+        RatingEventProducer ratingProducer = null;
+        TagEventProducer tagProducer = null;
+        LinkEventProducer linkProducer = null;
         try {
             // Read CSV and create MovieEvent objects
-            MovieEventCSVReader csvReader = new MovieEventCSVReader();
-            String csvFilePath = "./ml_20m/movie_events.csv";
-
-            logger.info("Reading movie events from CSV file: {}", csvFilePath);
-            List<MovieEvent> movieEvents = csvReader.readMovieEvents(csvFilePath);
+            List<MovieEvent> movieEvents = readMovieEvents("./ml_20m/movies_small.csv");
 
             if (movieEvents.isEmpty()) {
                 logger.warn("No movie events found in CSV file. Exiting.");
                 return;
             }
 
-            logger.info("Successfully read {} movie events from CSV", movieEvents.size());
-
-            // Initialize Kafka producer and send events
-            producer = new MovieEventProducer(config);
+            movieProducer = new MovieEventProducer(config);
             for (MovieEvent event : movieEvents) {
-                producer.sendEvent(event);
+                movieProducer.sendEvent(event);
             }
+
+            // Read ratings CSV
+            List<RatingEvent> ratingEvents = readRatingEvents("./ml_20m/ratings_small.csv");
+            ratingProducer = new RatingEventProducer(config);
+            for (RatingEvent event : ratingEvents) {
+                ratingProducer.sendEvent(event);
+            }
+
+            // Read tags CSV
+            List<TagEvent> tagEvents = readTagEvents("./ml_20m/tags_small.csv");
+            tagProducer = new TagEventProducer(config);
+            for (TagEvent event : tagEvents) {
+                tagProducer.sendEvent(event);
+            }
+
+            // Read links CSV
+            List<LinkEvent> linkEvents = readLinkEvents("./ml_20m/links_small.csv");
+            linkProducer = new LinkEventProducer(config);
+            for (LinkEvent event : linkEvents) {
+                linkProducer.sendEvent(event);
+            }
+        } catch (IOException e) {
+            logger.error("IO error occurred: {}", e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unexpected error occurred: {}", e.getMessage(), e);
+            throw e;
         } finally {
-            // Ensure producer is properly closed
-            if (producer != null) {
-                producer.close();
+            if (movieProducer != null) {
+                movieProducer.close();
+            }
+            if (ratingProducer != null) {
+                ratingProducer.close();
+            }
+            if (tagProducer != null) {
+                tagProducer.close();
+            }
+            if (linkProducer != null) {
+                linkProducer.close();
             }
         }
     }
 
+    /**
+     * Reads configuration properties from a file
+     * @param configFile the path to the configuration file
+     * @return Properties object containing the configuration
+     * @throws IOException if the file is not found or cannot be read
+     */
     public static Properties readConfig(final String configFile) throws IOException {
-    // reads the client configuration from client.properties
-    // and returns it as a Properties object
     if (!Files.exists(Paths.get(configFile))) {
       throw new IOException(configFile + " not found.");
     }
@@ -89,4 +133,27 @@ public class App {
     return config;
   }
 
+  private static List<MovieEvent> readMovieEvents(String filePath) throws IOException {
+      logger.info("Reading movie events from CSV file: {}", filePath);
+      MovieReader csvReader = new MovieReader();
+      return csvReader.readEvents(filePath);
+  }
+
+  private static List<RatingEvent> readRatingEvents(String filePath) throws IOException {
+      logger.info("Reading rating events from CSV file: {}", filePath);
+      RatingReader csvReader = new RatingReader();
+      return csvReader.readEvents(filePath);
+  }
+
+  private static List<TagEvent> readTagEvents(String filePath) throws IOException {
+      logger.info("Reading tag events from CSV file: {}", filePath);
+      TagReader csvReader = new TagReader();
+      return csvReader.readEvents(filePath);
+  }
+
+    private static List<LinkEvent> readLinkEvents(String filePath) throws IOException {
+        logger.info("Reading link events from CSV file: {}", filePath);
+        LinkReader csvReader = new LinkReader();
+        return csvReader.readEvents(filePath);
+    }
 }
