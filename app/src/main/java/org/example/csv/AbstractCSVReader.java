@@ -1,7 +1,10 @@
 package org.example.csv;
 
-import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public abstract class AbstractCSVReader<T> {
 
         logger.info("Starting to read {} from CSV file: {}", getEventTypeName(), filePath);
 
-        try (FileReader reader = new FileReader(filePath);
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8);
              CSVParser csvParser = new CSVParser(reader,
                  CSVFormat.DEFAULT.builder()
                             .setHeader()
