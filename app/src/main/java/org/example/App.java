@@ -54,10 +54,10 @@ public class App {
      * Main application logic for reading CSV and initializing Kafka producer
      */
     private static void run(Properties config) throws Exception {
-        MovieEventProducer movieProducer;
-        RatingEventProducer ratingProducer;
-        TagEventProducer tagProducer;
-        LinkEventProducer linkProducer;
+        MovieEventProducer movieProducer = null;
+        RatingEventProducer ratingProducer = null;
+        TagEventProducer tagProducer = null;
+        LinkEventProducer linkProducer = null;
         try {
             // Read CSV and create MovieEvent objects
             List<MovieEvent> movieEvents = readMovieEvents("./ml_20m/movies_small.csv");
@@ -116,9 +116,9 @@ public class App {
 
     /**
      * Reads configuration properties from a file
-     * @param configFile
-     * @return
-     * @throws IOException
+     * @param configFile the path to the configuration file
+     * @return Properties object containing the configuration
+     * @throws IOException if the file is not found or cannot be read
      */
     public static Properties readConfig(final String configFile) throws IOException {
     if (!Files.exists(Paths.get(configFile))) {
