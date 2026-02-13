@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.example.csv.LinkReader;
@@ -31,6 +32,20 @@ import org.slf4j.LoggerFactory;
 public class App {
     
     private static final Logger logger = LoggerFactory.getLogger(App.class);
+    
+    public static final Map<String, String> SMALL_CSVS = Map.of(
+        "movies", "./ml_20m/movies_small.csv",
+        "ratings", "./ml_20m/ratings_small.csv",
+        "tags", "./ml_20m/tags_small.csv",
+        "links", "./ml_20m/links_small.csv"
+    );
+    
+    public static final Map<String, String> LARGE_CSVS = Map.of(
+        "movies", "./ml_20m/movies.csv",
+        "ratings", "./ml_20m/ratings.csv",
+        "tags", "./ml_20m/tags.csv",
+        "links", "./ml_20m/links.csv"
+    );
     
     public static void main(String[] args) {
         logger.info("Starting Movie Producer Application...");
@@ -54,13 +69,23 @@ public class App {
      * Main application logic for reading CSV and initializing Kafka producer
      */
     private static void run(Properties config) throws Exception {
+        run(config, true);
+    }
+
+    /**
+     * Main application logic for reading CSV and initializing Kafka producer
+     * @param useSmallCsvs if true, use small CSV files; otherwise use large CSV files
+     */
+    private static void run(Properties config, boolean useSmallCsvs) throws Exception {
         MovieEventProducer movieProducer = null;
         RatingEventProducer ratingProducer = null;
         TagEventProducer tagProducer = null;
         LinkEventProducer linkProducer = null;
+        Map<String, String> csvPaths = useSmallCsvs ? SMALL_CSVS : LARGE_CSVS;
+
         try {
             // Read CSV and create MovieEvent objects
-            List<MovieEvent> movieEvents = readMovieEvents("./ml_20m/movies_small.csv");
+            List<MovieEvent> movieEvents = readMovieEvents(csvPaths.get("movies"));
 
             if (movieEvents.isEmpty()) {
                 logger.warn("No movie events found in CSV file. Exiting.");
@@ -73,21 +98,21 @@ public class App {
             }
 
             // Read ratings CSV
-            List<RatingEvent> ratingEvents = readRatingEvents("./ml_20m/ratings_small.csv");
+            List<RatingEvent> ratingEvents = readRatingEvents(csvPaths.get("ratings"));
             ratingProducer = new RatingEventProducer(config);
             for (RatingEvent event : ratingEvents) {
                 ratingProducer.sendEvent(event);
             }
 
             // Read tags CSV
-            List<TagEvent> tagEvents = readTagEvents("./ml_20m/tags_small.csv");
+            List<TagEvent> tagEvents = readTagEvents(csvPaths.get("tags"));
             tagProducer = new TagEventProducer(config);
             for (TagEvent event : tagEvents) {
                 tagProducer.sendEvent(event);
             }
 
             // Read links CSV
-            List<LinkEvent> linkEvents = readLinkEvents("./ml_20m/links_small.csv");
+            List<LinkEvent> linkEvents = readLinkEvents(csvPaths.get("links"));
             linkProducer = new LinkEventProducer(config);
             for (LinkEvent event : linkEvents) {
                 linkProducer.sendEvent(event);
