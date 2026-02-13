@@ -97,13 +97,13 @@ public class App {
                 movieProducer.sendEvent(event);
             }
 
-            // Read ratings CSV
-            List<RatingEvent> ratingEvents = readRatingEvents(csvPaths.get("ratings"));
-            ratingProducer = new RatingEventProducer(config);
-            for (RatingEvent event : ratingEvents) {
-                ratingProducer.sendEvent(event);
-            }
-
+            // Read ratings CSV, alot of data, so commented out for now
+            // List<RatingEvent> ratingEvents = readRatingEvents(csvPaths.get("ratings"));
+            // ratingProducer = new RatingEventProducer(config);
+            // for (RatingEvent event : ratingEvents) {
+            //     ratingProducer.sendEvent(event);
+            // }
+            
             // Read tags CSV
             List<TagEvent> tagEvents = readTagEvents(csvPaths.get("tags"));
             tagProducer = new TagEventProducer(config);
